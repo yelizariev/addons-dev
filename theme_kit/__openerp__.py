@@ -18,6 +18,7 @@
     ],
     "external_dependencies": {"python": [], "bin": []},
     "data": [
+        "security/ir.model.access.csv",
         "views/templates.xml",
         "views/res_config.xml",
         "views/theme.xml",

@@ -7,22 +7,22 @@ class Theme(models.Model):
 
     name = fields.Char('Name')
     main_menu_navbar_bg = fields.Char('Background color', help="Color for Main Menu Bar")
-    html = fields.Text('Html', help='technical computed field', compute='_compute_html')
+    code = fields.Text('Code', help='technical computed field', compute='_compute_code')
 
     @api.multi
-    def _compute_html(self):
+    def _compute_code(self):
         for r in self:
             # double {{ will be formated as single {
-            html = '''
-<style type="text/css">
+            code = '''
+<style type="text/css" id="custom_css">
 #oe_main_menu_navbar{{
-  background-color: {main_menu_navbar_bg}
+  background-color: {theme.main_menu_navbar_bg}
 }}
 </style>
             '''.format(
-                main_menu_navbar_bg=r.main_menu_navbar_bg,
+                theme=r,
             )
 
-            r.html = html
+            r.code = code
 
  
