@@ -15,10 +15,12 @@
 
     "depends": [
         "web_debranding",
+        "web_login_background",
     ],
     "external_dependencies": {"python": [], "bin": []},
     "data": [
         "security/ir.model.access.csv",
+        "views/ir_attachment.xml",
         "views/templates.xml",
         "views/res_config.xml",
         "views/theme.xml",

@@ -3,9 +3,13 @@ import hashlib
 
 from openerp import models, fields, api
 
-FIELD_PARAM_LIST = [
+FIELD_PARAM_ID_LIST = [
     ('theme_id', 'theme_kit.current_theme_id'),
     ('favicon_id', 'theme_kit.current_favicon_id'),
+]
+FIELD_PARAM_STR_LIST = [
+    ('page_title', 'web_debranding.new_title'),
+    ('system_name', 'web_debranding.new_name'),
 ]
 
 CUSTOM_CSS_ARCH = '''<?xml version="1.0"?>
@@ -23,10 +27,39 @@ class Config(models.Model):
     theme_id = fields.Many2one('theme_kit.theme', string="Color Scheme")
     favicon_id = fields.Many2one('ir.attachment', string="Favicon")
 
+    page_title = fields.Char('Page Title', help='''Anything you want to see in page title, e.g.
+* CompanyName
+* CompanyName's Portal
+* CompanyName's Operation System
+* etc.
+    ''')
+    system_name = fields.Char('System Name', help='''e.g.
+* CompanyName's Portal
+* CompanyName's Operation System
+* etc.
+    ''')
+    company_logo = fields.Binary('Company Logo')
+
+    wallpapers_count = fields.Integer('Wallpapers', readonly=True)
+
+    @api.multi
+    def get_default_wallpapers_count(self):
+        wallpapers_count = self.env['ir.attachment'].search_count([('use_as_background', '=', True)])
+        return {'wallpapers_count': wallpapers_count}
+
+    @api.multi
+    def get_default_company_logo(self):
+        return {'company_logo': self.env.user.company_id.logo}
+
+    @api.multi
+    def set_company_logo(self):
+        self.env.user.company_id.logo = self.company_logo
+
+
     @api.multi
     def get_default_ids(self):
         res = {}
-        for field, param in FIELD_PARAM_LIST:
+        for field, param in FIELD_PARAM_ID_LIST:
             value = self.env['ir.config_parameter'].get_param(param)
             try:
                 res[field] = int(value)
@@ -36,8 +69,21 @@ class Config(models.Model):
 
     @api.multi
     def set_ids(self):
-        for field, param in FIELD_PARAM_LIST:
+        for field, param in FIELD_PARAM_ID_LIST:
             self.env['ir.config_parameter'].set_param(param, getattr(self, field).id or '')
+
+    @api.multi
+    def get_default_strs(self):
+        res = {}
+        for field, param in FIELD_PARAM_STR_LIST:
+            value = self.env['ir.config_parameter'].get_param(param)
+            res[field] = value
+        return res
+
+    @api.multi
+    def set_strs(self):
+        for field, param in FIELD_PARAM_STR_LIST:
+            self.env['ir.config_parameter'].set_param(param, getattr(self, field) or '')
 
     @api.multi
     def set_theme(self):

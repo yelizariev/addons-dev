@@ -13,7 +13,7 @@ Configuration
 
 * `Enable technical features <https://odoo-development.readthedocs.io/en/latest/odoo/usage/technical-features.html>`__
 * Open menu ``Settings / Brand Kit / Brand``
-* Choose **Color Scheme** or create new one (set empty to apply default color scheme)
+* Choose **Color Scheme** or create new one. To return default color scheme set empty value
 * **Favicon**: type some name (e.g. *favicon*) and click *Create and Edit*
 
   * Choose **Type** (File or URL), then upload icon or specify url
