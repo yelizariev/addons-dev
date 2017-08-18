@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="assets_backend" name="pos_order_note_assets" inherit_id="point_of_sale.assets">
+            <xpath expr="//link[last()]" position="after">
+                <script type="text/javascript" src="/pos_qr/static/src/js/jquery-qrcode.js"></script>
+                <!--<link rel="stylesheet" href="/pos_qr/static/src/css/pos.css"/>-->
+            </xpath>
+        </template>
+    </data>
+</openerp>
