@@ -16,6 +16,8 @@ Configuration
 
   * ``product_import_custom.product``
   * ``product_import_custom.product_variant``
+  * ``product_import_custom.username``
+  * ``product_import_custom.password``
 
 * Open menu ``[[ Settings ]] >> Technical >> Automation >> Scheduled Actions``
 * Open record named ``Sync products via remote csv``
