@@ -24,3 +24,6 @@ class TestImport(TransactionCase):
     def test_import_base(self):
         """Check that there is no errors during import"""
         self.import_files('product.csv', 'product_variant.csv')
+
+        # uncomment to prevent updates reverting and check updates in odoo backend
+        self.env.cr.commit()

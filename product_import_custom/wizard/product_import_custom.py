@@ -2,21 +2,15 @@
 
 import csv
 import logging
-import smtplib
-import urllib2, base64
-from io import BytesIO
+import base64
 import StringIO
 import requests
-import csv
-import xmlrpclib
 import re
-import pprint
-import sys
 import hashlib
 import os.path
 import time
-import codecs
 import itertools
+import urllib2
 from PIL import Image
 from __builtin__ import False
 from psycopg2 import IntegrityError
@@ -33,25 +27,25 @@ nameRegex =  '[^A-Za-z0-9\:\|\u2018\(\)`\u2018+\xdf\u2018\xfc&\xdf\xd6\xf6\'\xe4
 treshholdTime = time.time() - 3600 * 24 * 30
 
 
-# Implemented as Wizard, but it uses only via cron -- no needs to use it via UI
+# Implemented as Wizard, but it uses only via cron -- no need to use it via UI
 class ProductImportCustom(models.TransientModel):
     _name = 'product_import_custom.wizard'
 
 
     product_url = fields.Char(
         'Product URL',
-        default=lambda self: self.env['ir.config_parameter'].get_param('product_import_custom.product', ''))
+        default=lambda self: self.env['ir.config_parameter'].get_param('product_import_custom.product_url', ''))
     product_variant_url = fields.Char(
         'Product Variant URL',
-        default=lambda self: self.env['ir.config_parameter'].get_param('product_import_custom.product_variant'))
+        default=lambda self: self.env['ir.config_parameter'].get_param('product_import_custom.product_variant_url'))
     username = fields.Char(
         'Username',
         help='Remote server authentication username',
-        default=lambda self: self.env['ir.config_parameter'].get_param('product_import_custom.username'))
+        default=lambda self: self.env['ir.config_parameter'].get_param('product_import_custom.username', ''))
     password = fields.Char(
         'Password',
         help='Remote server authentication password',
-        default=lambda self: self.env['ir.config_parameter'].get_param('product_import_custom.password'))
+        default=lambda self: self.env['ir.config_parameter'].get_param('product_import_custom.password', ''))
     quoting = fields.Selection([
         ('"', "\" - Double quote"),
         ('\'', "' - Single quote"),
@@ -93,8 +87,8 @@ class ProductImportCustom(models.TransientModel):
                 ('attribute_id', '=', name_attribute_id),
             ])
 
-        _logger.debug("UPDATING product.template with id %d", product)
-        product.write(csv_product_template)
+            _logger.debug("UPDATING product.template with id %d", product)
+            product.write(csv_product_template)
         leftoverVariantsIds = product.product_variant_ids.ids
 
         attributeValueIds = []
@@ -116,7 +110,7 @@ class ProductImportCustom(models.TransientModel):
 
             attributeValueIds.append(attributeValueForName.id)
             # csv_product['attribute_line_ids'] = [2]
-            csv_product['attribute_value_ids'] = [(6, 0, attributeValueForName.id)]
+            csv_product['attribute_value_ids'] = [(6, 0, attributeValueForName.ids)]
             productAttributeLineData = {
                 'product_tmpl_id': product.id,
                 'attribute_id': name_attribute_id,
@@ -132,7 +126,7 @@ class ProductImportCustom(models.TransientModel):
             else:
                 productVariant = productVariant[0]
                 productVariant.write(csv_product)
-                if productVariant in leftoverVariantsIds:
+                if productVariant.id in leftoverVariantsIds:
                     del leftoverVariantsIds[leftoverVariantsIds.index(productVariant.id)]
 
             productPrice = self.env['product.attribute.price'].search([
@@ -149,10 +143,10 @@ class ProductImportCustom(models.TransientModel):
             productPrice.write({'price_extra': csv_product['price_extra']})
 
 
-        if leftoverVariants:
-            _logger.debug('Deactivate leftoverVariants = %s', leftoverVariants)
+        if leftoverVariantsIds:
+            _logger.debug('Deactivate leftoverVariants = %s', leftoverVariantsIds)
             self.env['product.product'].search([
-                ('id', 'in', leftoverVariants)
+                ('id', 'in', leftoverVariantsIds)
             ]).write({'active': False})
 
         #pData = self.env['product.template', 'read', product)
@@ -163,9 +157,14 @@ class ProductImportCustom(models.TransientModel):
 
     def _urlopen(self, url):
         req = urllib2.Request(url)
-        b64str = base64.encodestring('%s:%s' % (self.username, self.password)).replace('\n', '')
-        req.add_header("Authorization", "Basic %s" % b64str)
+        if self.username:
+            b64str = base64.encodestring('%s:%s' % (self.username, self.password)).replace('\n', '')
+            req.add_header("Authorization", "Basic %s" % b64str)
         return urllib2.urlopen(req)
+
+    @api.model
+    def cron_execute(self):
+        self.create({}).execute()
 
     @api.multi
     def execute(self):
@@ -173,7 +172,7 @@ class ProductImportCustom(models.TransientModel):
         self.ensure_one()
 
         product_file = self._urlopen(self.product_url)
-        product_variant_file = self._urlopen(self.product_variant_file)
+        product_variant_file = self._urlopen(self.product_variant_url)
         # we don't need use with-block or other way to close files, because
         # they are from urlopen which doesn't required to be closed
         self._parse_and_import(product_file, product_variant_file)
@@ -219,10 +218,6 @@ class ProductImportCustom(models.TransientModel):
 
         i = 0
         for row in self._read_csv(product_file):
-            i += 1
-            if i == 33:
-                # TMP
-                break
             name = re.sub(nameRegex, '', row[2], 0, re.UNICODE)
             if name != row[2]:
                 _logger.warning('Bad product name: \nGOT %s \nNEW %s', row[2], name)
@@ -232,7 +227,7 @@ class ProductImportCustom(models.TransientModel):
                 try:
                     path_to_file = os.path.join(images_data_dir, hashlib.sha224(image_url).hexdigest() + "." + image_url.split('.')[-1])
                     if (not os.path.isfile(path_to_file)) or os.path.getmtime(path_to_file) < treshholdTime:
-                        _logger.debug("downloading image... %s", image_url)
+                        _logger.debug("downloading image \n%s TO\n%s", image_url, path_to_file)
                         req = requests.get(image_url)
                         if req.status_code == 200:
                             image_response = req.content
@@ -243,6 +238,8 @@ class ProductImportCustom(models.TransientModel):
                             pilImg.load()
                             pilImg.thumbnail((400, 400), Image.ANTIALIAS)
                             pilImg.save(path_to_file)
+                        else:
+                            _logger.debug("Image exists:\n%s -- Source\n%s -- File", image_url, path_to_file)
 
                     if os.path.isfile(path_to_file):
                         base64_image = base64.b64encode(open(path_to_file).read(100000))
@@ -254,12 +251,7 @@ class ProductImportCustom(models.TransientModel):
 
 
         _logger.info("Processing product variants...")
-        i = 0
         for row in self._read_csv(product_variant_file):
-            i += 1
-            if i == 300:
-                # TMP
-                break
 
             if not product_templates.has_key(row[6]):
                 _logger.warning("key %s not found" % row[6])
@@ -288,7 +280,7 @@ class ProductImportCustom(models.TransientModel):
             try:
                 self._import(product, variants)
             except IntegrityError:
-                # IntegrityError leads to blocking all futher updates
+                # IntegrityError leads to blocking all futher updates, so raise and stop executing
                 raise
             except Exception as e:
                 _logger.warning('Error on importing', exc_info=True)
