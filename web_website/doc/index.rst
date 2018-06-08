@@ -14,7 +14,9 @@ Installation
 Usage
 =====
 
-After installation you will see Website Switcher in top right-hand corner
+After installation you will see Website Switcher in top right-hand corner.
+
+Besides, there is a new menu ``[[ Settings ]] >> Technical >> Parameters >> Website Properties`` (available in `Activate Developer <https://odoo-development.readthedocs.io/en/latest/odoo/usage/debug-mode.html>`__)
 
 Uninstallation
 ==============

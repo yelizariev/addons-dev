@@ -6,9 +6,12 @@
  Website Switcher in Backend
 =============================
 
-Technical module to switch Websites in Backend similarly to Company Switcher.
+Technical module to switch Websites in Backend similarly to Company Switcher,
+but instead of changing a field in ``res.users`` , it only adds ``website_id``
+value to the context.
 
-Also, introduce new fields attribute ``website_dependent``.
+Also, introduces new fields attribute ``website_dependent``, which can be used
+only along with ``company_dependent``.
 
 Credits
 =======
