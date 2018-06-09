@@ -11,14 +11,14 @@ class IrProperty(models.Model):
 
     @api.model
     def _is_website_dependent(self, name, model):
-        return self.env[model]._fields[name].website_dependent
+        return getattr(self.env[model]._fields[name], 'website_dependent', None)
 
     @api.model
     def _check_website_dependent(self, name, model, **kwargs):
         if self._is_website_dependent(name, model):
             return self.with_context(website_dependent=True, **kwargs)
         else:
-            none_values = dict((key, None) for key in kwargs.items())
+            none_values = dict((key, None) for key in kwargs.keys())
             return self.with_context(**none_values)
 
     @api.model
@@ -37,11 +37,11 @@ class IrProperty(models.Model):
 
     @api.model
     def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
-        if self.env.context.get('_search_website_dependent_order'):
+        if self.env.context.get('_search_order_website_dependent'):
             new_order = [order] if order else []
             new_order.append('website_id')
             order = ','.join(new_order)
-        if self.env.context.get('_search_website_dependent_domain'):
+        if self.env.context.get('_search_domain_website_dependent'):
             website_id = self._get_website_id()
             args.append(('website_id', '=', website_id))
         return super(IrProperty, self)._search(
@@ -55,35 +55,32 @@ class IrProperty(models.Model):
 
     @api.model
     def create(self, vals):
-        if self.env.context.get('set_multi'):
+        if self.env.context.get('create_website_dependent'):
             website_id = self._get_website_id()
             vals['website_id'] = website_id
         return super(IrProperty, self).create(vals)
 
     @api.model
     def get(self, name, model, res_id=False):
-        """Pass context in order to
-        * add website_id to attribute "order" in search call"""
         return super(IrProperty, self._check_website_dependent(
             name, model,
             _get_domain_website_dependent=True,
-            _search_website_dependent_order=True
+            _search_order_website_dependent=True
         )).get(name, model, res_id=res_id)
 
     @api.model
     def get_multi(self, name, model, ids):
-        """Pass context in order to
-        * add website_id to attribute "order" in search call"""
         return super(IrProperty, self._check_website_dependent(
             name, model,
-            _search_website_dependent_order=True
+            _get_domain_website_dependent=True,
+            _search_order_website_dependent=True
         )).get_multi(name, model, ids)
 
     @api.model
     def set_multi(self, name, model, values, default_value=None):
         return super(IrProperty, self._check_website_dependent(
             name, model,
-            _search_website_dependent_domain=True,
+            _search_domain_website_dependent=True,
             create_website_dependent=True,
         )).set_multi(name, model, values, default_value=default_value)
 
@@ -91,6 +88,6 @@ class IrProperty(models.Model):
     def search_multi(self, name, model, operator, value):
         return super(IrProperty, self._check_website_dependent(
             name, model,
-            _search_website_dependent_order=True,
+            _search_order_website_dependent=True,
             _get_domain_website_dependent=True,
         )).get(name, model, operator, value)

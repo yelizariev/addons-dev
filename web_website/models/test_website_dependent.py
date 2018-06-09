@@ -5,6 +5,6 @@ from odoo import models, fields
 
 
 class WebsiteDependent(models.Model):
-    _name = 'test.website'
+    _name = 'test.website_dependent'
 
     foo = fields.Char(company_dependent=True, website_dependent=True)

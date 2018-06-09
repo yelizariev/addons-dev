@@ -11,13 +11,12 @@ class TestFields(common.TransactionCase):
 
     def test_website_dependent(self):
         """ test website-dependent fields. """
-        MODEL = 'test.website'
+        MODEL = 'test.website_dependent'
 
         # consider three companies
         website0 = self.env.ref('website.default_website')
         website1 = self.env.ref('website.website2')
         website2 = self.env['website'].create({'name': 'Extra Website'})
-        demo_user = self.env.ref('base.user_demo')
         context0 = dict(website_id=website0.id)
         context1 = dict(website_id=website1.id)
         context2 = dict(website_id=website2.id)
@@ -28,7 +27,7 @@ class TestFields(common.TransactionCase):
                                         'value': 'default', 'type': 'char'})
 
         # create/modify a record, and check the value for each user
-        record = self.env[MODEL].create({'foo': 'main'}).sudo(demo_user)
+        record = self.env[MODEL].with_context(context0).create({'foo': 'main'})
         record.invalidate_cache()
         self.assertEqual(record.with_context(context0).foo, 'main')
         self.assertEqual(record.with_context(context1).foo, 'default')

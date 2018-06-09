@@ -20,6 +20,7 @@
     "depends": [
         "web",
         "website",
+        "test_new_api",
     ],
     "external_dependencies": {"python": [], "bin": []},
     "data": [
