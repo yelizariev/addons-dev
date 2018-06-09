@@ -11,7 +11,7 @@ but instead of changing a field in ``res.users`` , it only adds ``website_id``
 value to the context.
 
 Also, introduces new fields attribute ``website_dependent``, which can be used
-only along with ``company_dependent``.
+only along with ``company_dependent``. See `<models/test_website.py>`_ and `<tests/test_website_dependent.py>`_ as an example of usage.
 
 Credits
 =======
