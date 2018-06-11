@@ -31,6 +31,7 @@
         "views/assets.xml",
     ],
     "demo": [
+        "demo/assets_demo.xml",
     ],
     "qweb": [
         "static/src/xml/qweb.xml",
