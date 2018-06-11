@@ -20,10 +20,11 @@
     "depends": [
         "web",
         "website",
-        "test_new_api",
+        "base_setup",
     ],
     "external_dependencies": {"python": [], "bin": []},
     "data": [
+        "security/ir.model.access.csv",
     ],
     "demo": [
     ],

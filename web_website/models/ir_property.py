@@ -24,7 +24,7 @@ class IrProperty(models.Model):
     @api.model
     def _get_website_id(self):
         # TODO shall we try to compute default website?
-        website_id = self._context.get('website_id')
+        website_id = self._context.get('website_id') or self.env.user.backend_website_id.id
         return website_id
 
     def _get_domain(self, prop_name, model):

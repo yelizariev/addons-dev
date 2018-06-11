@@ -13,6 +13,12 @@ value to the context.
 Also, introduces new fields attribute ``website_dependent``, which can be used
 only along with ``company_dependent``. See `<models/test_website.py>`_ and `<tests/test_website_dependent.py>`_ as an example of usage.
 
+Roadmap
+=======
+
+* TODO: Use context on switching between websites to allow work with different
+  websites at the same time by using different browser tabs.
+
 Credits
 =======
 

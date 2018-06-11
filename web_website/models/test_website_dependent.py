@@ -8,3 +8,9 @@ class WebsiteDependent(models.Model):
     _name = 'test.website_dependent'
 
     foo = fields.Char(company_dependent=True, website_dependent=True)
+
+
+class CompanyDependent(models.Model):
+    _name = 'test.company_dependent'
+
+    foo = fields.Char(company_dependent=True)

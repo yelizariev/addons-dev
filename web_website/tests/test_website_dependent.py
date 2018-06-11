@@ -41,6 +41,7 @@ class TestFields(common.TransactionCase):
 
     def test_company_dependent(self):
         """ test company-dependent fields. It's the same test as in odoo core"""
+        MODEL = 'test.company_dependent'
         # consider three companies
         company0 = self.env.ref('base.main_company')
         company1 = self.env['res.company'].create({'name': 'A', 'parent_id': company0.id})
@@ -53,13 +54,13 @@ class TestFields(common.TransactionCase):
         user2 = self.env['res.users'].create({'name': 'Baz', 'login': 'baz',
                                               'company_id': company2.id, 'company_ids': []})
         # create a default value for the company-dependent field
-        field = self.env['ir.model.fields'].search([('model', '=', 'test_new_api.company'),
+        field = self.env['ir.model.fields'].search([('model', '=', MODEL),
                                                     ('name', '=', 'foo')])
         self.env['ir.property'].create({'name': 'foo', 'fields_id': field.id,
                                         'value': 'default', 'type': 'char'})
 
         # create/modify a record, and check the value for each user
-        record = self.env['test_new_api.company'].create({'foo': 'main'})
+        record = self.env[MODEL].create({'foo': 'main'})
         record.invalidate_cache()
         self.assertEqual(record.sudo(user0).foo, 'main')
         self.assertEqual(record.sudo(user1).foo, 'default')
@@ -70,22 +71,3 @@ class TestFields(common.TransactionCase):
         self.assertEqual(record.sudo(user0).foo, 'main')
         self.assertEqual(record.sudo(user1).foo, 'alpha')
         self.assertEqual(record.sudo(user2).foo, 'default')
-
-        # create company record and attribute
-        company_record = self.env['test_new_api.company'].create({'foo': 'ABC'})
-        attribute_record = self.env['test_new_api.company.attr'].create({
-            'company': company_record.id,
-            'quantity': 1,
-        })
-        self.assertEqual(attribute_record.bar, 'ABC')
-
-        # change quantity, 'bar' should recompute to 'ABCABC'
-        attribute_record.quantity = 2
-        self.assertEqual(attribute_record.bar, 'ABCABC')
-        self.assertFalse(self.env.has_todo())
-
-        # change company field 'foo', 'bar' should recompute to 'DEFDEF'
-        company_record.foo = 'DEF'
-        self.assertEqual(attribute_record.company.foo, 'DEF')
-        self.assertEqual(attribute_record.bar, 'DEFDEF')
-        self.assertFalse(self.env.has_todo())
