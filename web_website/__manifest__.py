@@ -24,11 +24,16 @@
     ],
     "external_dependencies": {"python": [], "bin": []},
     "data": [
+        "security/security.xml",
         "security/ir.model.access.csv",
+        "views/res_config_views.xml",
+        "views/res_users_views.xml",
+        "views/assets.xml",
     ],
     "demo": [
     ],
     "qweb": [
+        "static/src/xml/qweb.xml",
     ],
 
     "post_load": None,

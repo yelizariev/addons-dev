@@ -14,7 +14,7 @@ Installation
 Configuration
 =============
 
-Activate **Multi Website for Backend**:
+Activate **Multi Websites for Backend**:
 
 * Either via ``[[ Settings ]] >> General Settings``
 * or per user via ``[[ Settings ]] >> Users >> Users`` (you need to activate `Developer mode <https://odoo-development.readthedocs.io/en/latest/odoo/usage/debug-mode.html>`__ first)
@@ -24,7 +24,7 @@ Usage
 
 Website Switcher
 ----------------
-Once you activated **Multi Website for Backend**, will see *Website Switcher* in top right-hand corner.
+Once you activated **Multi Websites for Backend**, will see *Website Switcher* in top right-hand corner.
 
 Technically, it changes value of a technical field at User record. It means, that you can work only with one website in a momen, you cannot use two different browser tabs/windows to work with a different websites.
 
