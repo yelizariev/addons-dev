@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2015-2016 Ivan Yelizariev <https://it-projects.info/team/yelizariev>
+     Copyright 2016 Ilyas Rakhimkulov
+     Copyright 2016 Dinar Gabbasov <https://it-projects.info/team/GabbasovDinar>
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html). -->
+
 <templates id="template" xml:space="preserve">
     <t t-extend="Orderline">
         <t t-jquery=".info-list" t-operation="after">
@@ -26,23 +31,6 @@
                 <t t-if="!order.new_order"><t t-esc='order.sequence_number' /></t>
             </span>
         </t>
-    </t>
-
-    <t t-name="PreloadPopupWidget">
-        <div class="modal-dialog modal-popup-preload">
-            <div class="popup popup-preload">
-                <div id="floatingCirclesG">
-                    <div class="f_circleG" id="frotateG_01"></div>
-                    <div class="f_circleG" id="frotateG_02"></div>
-                    <div class="f_circleG" id="frotateG_03"></div>
-                    <div class="f_circleG" id="frotateG_04"></div>
-                    <div class="f_circleG" id="frotateG_05"></div>
-                    <div class="f_circleG" id="frotateG_06"></div>
-                    <div class="f_circleG" id="frotateG_07"></div>
-                    <div class="f_circleG" id="frotateG_08"></div>
-                </div>
-            </div>
-        </div>
     </t>
 
 </templates>

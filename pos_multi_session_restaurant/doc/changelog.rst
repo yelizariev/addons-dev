@@ -1,7 +1,30 @@
-.. _changelog:
+`3.2.2`
+-------
+- **IMP:** Improved performance
 
-Updates
-=======
+`3.2.1`
+-------
+- IMP: Refactoring the code to improve the speed of POS synchronization
+
+`3.2.0`
+-------
+- IMP: Optimization the rendering of orderlines after orders printing
+
+`2.2.0`
+-------
+- IMP: New option to disable changing Qty for orders sent to kitchen
+
+`2.1.3`
+-------
+- **IMP:** The code optimization of load data after syncing POS with a server
+
+`2.1.2`
+-------
+- **IMP:** Refactoring the code to fix a slow POS synchronization
+
+`2.1.1`
+-------
+- FIX: Floor rendering error in case if POS without any floors
 
 `2.1.0`
 -------

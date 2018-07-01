@@ -112,6 +112,10 @@ class PosOrderLineCanceled(models.Model):
     cancelled_reason_ids = fields.Many2many('pos.cancelled_reason', 'reason_cancelled_lines_rel',
                                             'canceled_line_id', 'cancelled_reason_id', string='Predefined Reasons')
 
+    # the absolute_discount field is needed for compatibility
+    # with <https://www.odoo.com/apps/modules/10.0/pos_orderline_absolute_discount/> module
+    absolute_discount = fields.Float(string='Discount (abs)', digits=0, default=0.0, readonly=True)
+
     @api.depends('price_unit', 'tax_ids', 'qty', 'discount', 'product_id')
     def _compute_amount_line_all(self):
         for line in self:
@@ -148,3 +152,6 @@ class PosConfig(models.Model):
     _inherit = 'pos.config'
 
     allow_custom_reason = fields.Boolean(string="Allow custom cancellation reason", help="When not active, user will be able to select predefined reasons only", default=True)
+    allow_cancel_deletion = fields.Boolean(string="Cancel the deletion", help="When not active, a user will have to select predefined reasons without the possibility to cancel this action", default=True)
+    show_popup_change_quantity = fields.Boolean(string="Specify Quantity to Cancel", help="Allow to specify a quantity for products to cancel")
+    show_cancel_info = fields.Boolean(string="Display the Cancellation Information", default=False, help="Display the information of canceled products in order in POS (format: Qty - User - Table)")

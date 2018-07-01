@@ -1,3 +1,7 @@
+/* Copyright 2016-2017 Ivan Yelizariev <https://it-projects.info/team/yelizariev>
+ * Copyright 2016 Dinar Gabbasov <https://it-projects.info/team/GabbasovDinar>
+ * License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html). */
+
 function testInject(){
     console.log('code is injected!');
     return 1;
@@ -125,7 +129,8 @@ window.mstest = {
     },
     check_revision_error: function(){
         warning_message = 'There is a conflict during synchronization, try your action again';
-        if ($('.modal .in').text() == warning_message)
+        if ($('.popup-error > p.body').text().indexOf(warning_message) !== -1){
             console.log('error', warning_message);
+        }
     },
 };

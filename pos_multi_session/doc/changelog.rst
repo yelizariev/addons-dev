@@ -1,7 +1,37 @@
-.. _changelog:
+`4.1.0`
+-------
+- **NEW:** Field "Active" to enable/disable synchronization for POSes. The multi-session parameter is required now to provide compatibility with "POS Multi Session Menu" module and other modules that put common settings in "POS Multi Session"
 
-Updates
-=======
+`4.0.6`
+-------
+- **FIX:** Incompatibility with pos_order_cancel_restaurant: it showed *Synchronization error* on removing order
+
+`4.0.5`
+-------
+- **IMP:** Improved performance
+
+`4.0.4`
+-------
+- **FIX:** Remove some orders after revision error
+
+`4.0.3`
+-------
+- **IMP:** All data are updated during POS loading
+- **IMP:** Improved orderline updating speed after synchronization with server
+
+`4.0.2`
+-------
+- **IMP:** Dramatically improved performance
+
+`4.0.1`
+-------
+- **IMP:** Refactoring the code to fix a slow POS synchronization
+
+`4.0.0`
+-------
+- REF: Server side of synchronization is moved to the separate module ``pos_multi_session_sync``
+- NEW: Allow to make synchronization via local server
+- NEW: Fiscal position synchronization
 
 `3.1.0`
 -------

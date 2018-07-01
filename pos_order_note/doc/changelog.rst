@@ -1,3 +1,13 @@
+`1.1.2`
+-------
+
+- **FIX:** order_widget is undefined
+
+`1.1.1`
+-------
+
+- **NEW:** Support the POS Mobile UI for Waiters module
+
 `1.0.1`
 -------
 
