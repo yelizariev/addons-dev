@@ -1,3 +1,5 @@
+![Навальный 20!8](https://st.navalny.com/media/sharing/9df3d0c22444422e9b04cd2404811d89_LIEOO2r.jpg)
+
 # addons-dev
 
 Addons Forge
